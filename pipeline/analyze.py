@@ -1,11 +1,8 @@
 """
-Phase 3: Statistical analysis
+Statistical analysis
 Computes YoY % change per metric per company, then benchmarks each company's
 YoY change against its industry peer group (z-score + percentile rank) for
 each metric, for each year.
-
-Output: a `metrics_analysis` table in the same SQLite DB, one row per
-company-year-metric, ready for Phase 4's flagging logic.
 """
 
 import os

@@ -1,11 +1,7 @@
 """
-Phase 1: Ingestion
+Ingestion
 Pulls company financial facts from SEC EDGAR's XBRL companyfacts API
 for the retail + tech peer groups, and saves raw JSON per company.
-
-IMPORTANT: Run this on your own machine, not in a sandbox — SEC EDGAR
-requires a descriptive User-Agent with a real contact email, and rate-limits
-by IP (10 req/sec max). Fill in USER_AGENT below before running.
 """
 
 import requests

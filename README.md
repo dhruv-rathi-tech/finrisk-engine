@@ -1,6 +1,16 @@
-# FinRisk: Financial Statement Anomaly & Risk Narrator
+# FinRisk Engine: Financial Statement Anomaly & Risk Narrator
 
-An AI-augmented audit-analytics pipeline that detects statistically anomalous year-over-year (YoY) variances in public company filings, benchmarks them against industry peers, and uses a locally-hosted LLM to generate auditor-grade narrative explanations.
+An AI-augmented audit analytics engine that detects statistically anomalous year-over-year (YoY) variances in public company filings, benchmarks them against industry peers using deterministic z-score modeling, and generates auditor-grade qualitative explanations using a locally-hosted LLM.
+
+---
+
+## Key Highlights
+
+- **Live SEC EDGAR Ingestion**: Direct XBRL extraction via the SEC company-facts API covering 17 enterprise leaders across Retail and Tech.
+- **Auditable Statistical Detection**: Anomalies are flagged through deterministic peer z-scores ($|z| \ge 2.0$) and percentile ranking. AI never decides what is anomalous.
+- **Local LLM Narration**: Uses Ollama with Llama 3.2 3B running 100% locally to draft auditor notes—ensuring privacy, audit consistency, and zero API costs.
+- **Accounting Nuance & Data Integrity**: Explicitly resolves XBRL tag fragmentation, shifts in GAAP reporting scope, period boundary misalignments, and low-base distortions.
+- **Power BI Integration**: Outputs to a clean SQLite schema designed for interactive dashboards across drill-downs, peer benchmarks, and anomaly matrices.
 
 ---
 
@@ -53,11 +63,23 @@ flowchart LR
 
 ---
 
+## Sample Engine Output
+
+When the engine detects an anomaly, it produces both quantitative metrics and natural language commentary:
+
+> **Company**: Salesforce (`CRM`) | **Fiscal Year**: 2021 | **Metric**: Net Income  
+> **YoY Change**: `+3,131.7%` | **Peer Z-Score**: `2.67` *(Severity: High)* | **Flags**: `STATISTICAL`, `DISTORTION CAVEAT`  
+> 
+> **AI Auditor Commentary (Llama 3.2 3B)**:  
+> *"Flagged YoY net income change of +3,131.7% represents a significant variance against the tech peer group (z-score: 2.67). While statistically abnormal, this item triggers a low-base distortion caveat due to near-zero prior-year net income. Evaluators should focus on the absolute dollar-level expansion rather than the headline percentage."*
+
+---
+
 ## Core Design Principles
 
-- **Pure Statistical Detection**: The detection layer relies strictly on peer z-scores and percentile ranks computed with deterministic, auditable thresholds ($|z| \ge 2.0$).
-- **AI as Communicator, Not Decision-Maker**: The LLM's sole responsibility is **narration**—explaining pre-flagged mathematical variances in plain English using SEC filing context. It never determines whether a figure is anomalous.
-- **Defensible & Auditable**: Distinguishes between sensationalized "AI fraud detection" claims and institutional-grade, verifiable quantitative risk analysis.
+- **Pure Statistical Detection**: Peer z-scores and percentile ranks are calculated mathematically with documented, deterministic thresholds ($|z| \ge 2.0$).
+- **AI as Explainer, Not Decision-Maker**: The LLM's only job is **narration**—contextualizing pre-flagged mathematical variances in plain English using SEC filing data. It never decides what counts as an anomaly.
+- **Defensible & Auditable**: Built to institutional standards where every flagged item has a reproducible mathematical trail and XBRL tag lineage.
 
 ---
 
@@ -73,15 +95,15 @@ flowchart LR
 
 ---
 
-## Pipeline Execution
+## Pipeline Modules
 
-| Phase | Module | Functionality |
+| Step | Script | Functionality |
 | :---: | :--- | :--- |
-| **1** | [`pipeline/fetch_data.py`](pipeline/fetch_data.py) | Ingests company-facts JSON directly from SEC EDGAR via rate-limited API calls. |
-| **2** | [`pipeline/normalize.py`](pipeline/normalize.py) | Harmonizes inconsistent XBRL tags, derives GAAP metrics, validates periods, and stages to SQLite. |
-| **3** | [`pipeline/analyze.py`](pipeline/analyze.py) | Calculates YoY % deltas and derives industry peer z-scores and percentile ranks. |
-| **4** | [`pipeline/flag.py`](pipeline/flag.py) | Evaluates rule-based anomaly thresholds ($|z| \ge 2.0$) and tags low-base distortion caveats. |
-| **5** | [`pipeline/narrate.py`](pipeline/narrate.py) | Feeds context to local Llama 3.2 3B to generate auditor-style commentary. |
+| **Ingestion** | [`pipeline/fetch_data.py`](pipeline/fetch_data.py) | Ingests company-facts JSON directly from SEC EDGAR via rate-limited API calls. |
+| **Normalization** | [`pipeline/normalize.py`](pipeline/normalize.py) | Harmonizes inconsistent XBRL tags, derives GAAP metrics, validates periods, and stages to SQLite. |
+| **Analysis** | [`pipeline/analyze.py`](pipeline/analyze.py) | Calculates YoY % deltas and derives industry peer z-scores and percentile ranks. |
+| **Flagging** | [`pipeline/flag.py`](pipeline/flag.py) | Evaluates rule-based anomaly thresholds ($|z| \ge 2.0$) and tags low-base distortion caveats. |
+| **Narration** | [`pipeline/narrate.py`](pipeline/narrate.py) | Feeds context to local Llama 3.2 3B to generate auditor-style commentary. |
 | **BI** | `FinRisk.pbix` | Interactive 4-page dashboard: Overview, Company Drill-down, Peer Benchmarking, Anomalies. |
 
 ---
@@ -92,9 +114,9 @@ Real SEC filings present significant reporting inconsistencies that this pipelin
 
 - **XBRL Tag Fragmentation**: Companies report equivalent concepts under varied tags (e.g., `Revenues` vs. `RevenueFromContractWithCustomerExcludingAssessedTax`). Handled via hierarchical priority fallbacks.
 - **Unreliable `fy` Metadata**: SEC API fiscal-year tags can misrepresent true accounting periods. Year buckets are derived strictly from the period `end` date.
-- **Method-Locking per Entity**: Prevented synthetic swings (e.g., Microsoft's reported OPEX shifting scope between FY22–FY23). A single derivation formula is enforced across all 5 years per company.
+- **Method-Locking per Entity**: Prevents synthetic swings (e.g., Microsoft's reported OPEX shifting scope between FY22–FY23). A single derivation formula is enforced across all 5 years per company.
 - **Principled `NULL` Retention**: Undisclosed or non-derivable values (e.g., Oracle/Kroger Gross Profit) remain `NULL` rather than being fabricated.
-- **Low-Base Distortion Caveats**: Flagged items with massive percentage spikes caused by near-zero prior-year bases (e.g., TJX FY2022 Net Income +3547.8% following COVID troughs) receive a `distortion_caveat` tag instructing the LLM to prioritize dollar shifts.
+- **Low-Base Distortion Caveats**: Flagged items with massive percentage spikes caused by near-zero prior-year bases (e.g., TJX FY2022 Net Income +3,547.8% following COVID troughs) receive a `distortion_caveat` tag instructing the LLM to prioritize dollar shifts.
 
 ---
 

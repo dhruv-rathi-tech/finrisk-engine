@@ -1,6 +1,6 @@
 """
-Phase 2: Normalization + DB load
-Reads raw companyfacts JSON (from Phase 1), extracts annual figures for
+Normalization + DB load
+Reads raw companyfacts JSON (from ingestion), extracts annual figures for
 FY2020-FY2024, applies tag-fallback and derivation logic where direct tags
 are missing, validates the result, and loads into SQLite.
 """

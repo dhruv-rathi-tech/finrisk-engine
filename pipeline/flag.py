@@ -1,10 +1,9 @@
 """
-Phase 4: Flagging logic
-Applies deterministic, auditable rules to the peer-benchmark z-scores from
-Phase 3. No AI/ML here on purpose — this layer needs to be traceable by hand,
+Applies deterministic, auditable rules to the peer-benchmark z-scores.
+No AI/ML here on purpose — this layer needs to be traceable by hand,
 the same way an auditor would want to verify "why was this flagged."
 
-Rules (documented, not hidden):
+Rules:
   - STATISTICAL FLAG: |z_score| >= Z_THRESHOLD (peer-relative outlier)
   - DISTORTION CAVEAT: |yoy_pct_change| >= DISTORTION_THRESHOLD_PCT
     (a huge % swing that may just reflect a tiny prior-year base, not a

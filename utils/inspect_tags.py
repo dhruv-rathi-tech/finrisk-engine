@@ -1,10 +1,10 @@
 """
-Phase 1.5: Tag inspection
+Tag inspection
 Checks which XBRL us-gaap tags each company actually has data for, across a
 shortlist of candidate tags per metric. Run this after fetch_data.py.
 
 This does NOT hit the network — it only reads the raw JSON files you already
-downloaded. Output is meant to be pasted back so Phase 2's tag-fallback logic
+downloaded. Output is meant to be pasted back so tag-fallback logic
 can be written against your real data.
 """
 

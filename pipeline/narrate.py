@@ -1,14 +1,12 @@
 """
-Phase 5: AI narration (Ollama / local LLM version)
+AI narration (Ollama / local LLM version)
 For each row in the `flags` table, sends the statistical context (company,
 metric, YoY change, peer comparison, severity) to a locally-running Ollama
 model and gets back a short auditor-style plain-English explanation.
 
-Requires Ollama running locally (https://ollama.com) with a model pulled,
-e.g.: ollama pull llama3.1:8b
 
 IMPORTANT — what the AI is and isn't doing here:
-The detection/flagging already happened in Phase 4 using pure statistics.
+The detection/flagging already happened earlier using pure statistics.
 The AI's ONLY job is to narrate and contextualize an already-flagged number
 in plain English — it does not decide what counts as anomalous, and it is
 explicitly instructed not to assert a definitive cause, only plausible
