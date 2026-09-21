@@ -1,0 +1,22 @@
+{
+  "project": "FinRisk",
+  "generated_at": "2026-09-22",
+  "timeframe": "FY2020-FY2024",
+  "companies_tracked": 17,
+  "peer_groups": {
+    "retail": ["WMT", "TGT", "COST", "HD", "LOW", "TJX", "BBY", "KR"],
+    "tech": ["AAPL", "MSFT", "GOOGL", "META", "ADBE", "CRM", "ORCL", "CSCO", "INTC"]
+  },
+  "metrics": ["revenue", "net_income", "operating_expenses", "gross_profit", "total_assets"],
+  "dataset_summary": {
+    "financial_records": 85,
+    "metrics_analyzed": 332,
+    "flagged_anomalies": 21,
+    "ai_narratives_generated": 21
+  },
+  "anomaly_breakdown": {
+    "high_severity": 1,
+    "medium_severity": 19,
+    "distortion_caveats": 4
+  }
+}
