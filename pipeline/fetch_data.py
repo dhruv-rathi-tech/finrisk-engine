@@ -12,7 +12,7 @@ import os
 # ---- CONFIG ----
 # SEC requires a descriptive User-Agent with a real contact (name/email).
 # Requests without this will get blocked (403).
-USER_AGENT = "Shrey - Portfolio Project (your_email@example.com)"  # <-- fill in your email
+USER_AGENT = "Dhruv Rathi - Portfolio Project ([EMAIL_ADDRESS])"  # <-- fill in your email
 
 RETAIL_TICKERS = ["WMT", "TGT", "COST", "HD", "LOW", "TJX", "BBY", "KR", "JWN"]
 TECH_TICKERS = ["AAPL", "MSFT", "GOOGL", "META", "ADBE", "CRM", "ORCL", "CSCO", "INTC"]
